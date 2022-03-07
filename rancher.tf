@@ -45,8 +45,8 @@ resource "kubernetes_secret" "rancher_tls" {
 
   type       = "kubernetes.io/tls"
   data       = {
-      "tls.crt" = var.tls_crt
-      "tls.key" = var.tls_key
+      "tls.crt" = var.rancher_tls_crt
+      "tls.key" = var.rancher_tls_key
   }
 }
 
