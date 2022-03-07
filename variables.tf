@@ -8,6 +8,9 @@ variable "rancher_host"           { type = string   }
 variable "dns_server"             { type = string   }
 variable "dns_port"               { type = string   }
 variable "searchdomain"           { type = string   }
+variable "tls_crt"                { type = string   }
+variable "tls_key"                { type = string   }
+variable "ca_crt"                 { type = string   }
 
 variable "rancher_password" {
   type      = string

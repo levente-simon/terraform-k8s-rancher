@@ -24,14 +24,52 @@ resource "random_password" "bootstrap_password" {
   override_special = "_%@"
 }
 
-resource "helm_release" "rancher" {
+resource "kubernetes_namespace" "rancher" {
   depends_on       = [ time_sleep.wait_60_seconds_1 ]
+
+  lifecycle {
+    ignore_changes  = all 
+  }
+
+  metadata {
+    name = "cattle-system"
+  }
+}
+
+resource "kubernetes_secret" "rancher_tls" {
+  depends_on = [ kubernetes_namespace.rancher ]
+  metadata {
+    name       = "rancher-tls"
+    namespace  = "cattle-system"
+  }
+
+  type       = "kubernetes.io/tls"
+  data       = {
+      "tls.crt" = var.tls_crt
+      "tls.key" = var.tls_key
+  }
+}
+
+resource "kubernetes_secret" "tls_ca" {
+  depends_on = [ kubernetes_namespace.rancher ]
+  metadata {
+    name       = "tls-ca"
+    namespace  = "cattle-system"
+  }
+
+  data       = {
+      "cacerts.pem"  = var.ca_crt
+  }
+}
+
+resource "helm_release" "rancher" {
+  depends_on       = [ kubernetes_secret.rancher_tls,
+                       kubernetes_secret. tls_ca ]
 
   name             = "rancher"
   repository       = "https://releases.rancher.com/server-charts/stable"
   chart            = "rancher"
   namespace        = "cattle-system"
-  create_namespace = true
 
   set {
     name  = "hostname"
@@ -48,6 +86,16 @@ resource "helm_release" "rancher" {
   set {
     name  = "noProxy"
     value = var.no_proxy
+  }
+
+  set {
+    name  = "ingress.tls.source"
+    value = "rancher-tls"
+  }
+
+  set {
+    name  = "privateCA"
+    value = "true"
   }
 }
 
