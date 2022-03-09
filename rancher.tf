@@ -27,9 +27,9 @@ resource "random_password" "bootstrap_password" {
 resource "kubernetes_namespace" "rancher" {
   depends_on       = [ time_sleep.wait_60_seconds_1 ]
 
-  lifecycle {
-    ignore_changes  = all 
-  }
+#  lifecycle {
+#    ignore_changes  = all 
+#  }
 
   metadata {
     name = "cattle-system"
