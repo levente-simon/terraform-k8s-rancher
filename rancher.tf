@@ -24,52 +24,27 @@ resource "random_password" "bootstrap_password" {
   override_special = "_%@"
 }
 
-resource "kubernetes_namespace" "rancher" {
-  depends_on       = [ time_sleep.wait_60_seconds_1 ]
-
+#resource "kubernetes_namespace" "rancher" {
+#  depends_on       = [ time_sleep.wait_60_seconds_1 ]
+#
 #  lifecycle {
 #    ignore_changes  = all 
 #  }
-
-  metadata {
-    name = "cattle-system"
-  }
-}
-
-resource "kubernetes_secret" "rancher_tls" {
-  depends_on = [ kubernetes_namespace.rancher ]
-  metadata {
-    name       = "tls-rancher-ingress"
-    namespace  = "cattle-system"
-  }
-
-  type       = "kubernetes.io/tls"
-  data       = {
-      "tls.crt" = var.rancher_tls_crt
-      "tls.key" = var.rancher_tls_key
-  }
-}
-
-resource "kubernetes_secret" "tls_ca" {
-  depends_on = [ kubernetes_namespace.rancher ]
-  metadata {
-    name       = "tls-ca"
-    namespace  = "cattle-system"
-  }
-
-  data       = {
-      "cacerts.pem"  = var.ca_crt
-  }
-}
+#
+#  metadata {
+#    name = "cattle-system"
+#  }
+#}
+#
 
 resource "helm_release" "rancher" {
-  depends_on       = [ kubernetes_secret.rancher_tls,
-                       kubernetes_secret. tls_ca ]
+  depends_on       = [ random_password.bootstrap_password ]
 
   name             = "rancher"
   repository       = "https://releases.rancher.com/server-charts/stable"
   chart            = "rancher"
   namespace        = "cattle-system"
+  create_namespace = true
 
   set {
     name  = "hostname"
@@ -99,8 +74,36 @@ resource "helm_release" "rancher" {
   }
 }
 
+resource "kubernetes_secret" "rancher_tls" {
+  depends_on = [ helm_release.rancher ]
+  metadata {
+    name       = "tls-rancher-ingress"
+    namespace  = "cattle-system"
+  }
+
+  type       = "kubernetes.io/tls"
+  data       = {
+      "tls.crt" = var.rancher_tls_crt
+      "tls.key" = var.rancher_tls_key
+  }
+}
+
+resource "kubernetes_secret" "tls_ca" {
+  depends_on = [ helm_release.rancher ]
+  metadata {
+    name       = "tls-ca"
+    namespace  = "cattle-system"
+  }
+
+  data       = {
+      "cacerts.pem"  = var.ca_crt
+  }
+}
+
+
 resource "time_sleep" "wait_30_seconds_2" {
-  depends_on      = [ helm_release.rancher ]
+  depends_on      = [ kubernetes_secret.tls_ca,
+                      kubernetes_secret.rancher_tls ]
   create_duration = "30s"
 }
 
