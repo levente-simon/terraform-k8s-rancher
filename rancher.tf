@@ -38,7 +38,8 @@ resource "random_password" "bootstrap_password" {
 #
 
 resource "helm_release" "rancher" {
-  depends_on       = [ random_password.bootstrap_password ]
+  depends_on       = [ time_sleep.wait_60_seconds_1,
+                       random_password.bootstrap_password ]
 
   name             = "rancher"
   repository       = "https://releases.rancher.com/server-charts/stable"
