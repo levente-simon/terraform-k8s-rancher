@@ -39,7 +39,7 @@ resource "kubernetes_namespace" "rancher" {
 resource "kubernetes_secret" "rancher_tls" {
   depends_on = [ kubernetes_namespace.rancher ]
   metadata {
-    name       = "rancher-tls"
+    name       = "tls-rancher-ingress"
     namespace  = "cattle-system"
   }
 
@@ -90,7 +90,7 @@ resource "helm_release" "rancher" {
 
   set {
     name  = "ingress.tls.source"
-    value = "rancher-tls"
+    value = "secret"
   }
 
   set {
