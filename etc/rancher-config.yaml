@@ -6,3 +6,7 @@ ingress:
   tls:
     source: secret
 privateCA: true
+postDelete:
+  namespaceList:
+    - cattle-fleet-system
+    - rancher-operator-system
