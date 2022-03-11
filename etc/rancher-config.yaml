@@ -1,0 +1,8 @@
+hostname: %s
+bootstrapPassword: %s
+proxy:  %s
+noProxy:  %s
+ingress:
+  tls:
+    source: secret
+privateCA: true

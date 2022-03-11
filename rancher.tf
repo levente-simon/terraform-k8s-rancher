@@ -24,59 +24,20 @@ resource "random_password" "bootstrap_password" {
   override_special = "_%@"
 }
 
-#resource "kubernetes_namespace" "rancher" {
-#  depends_on       = [ time_sleep.wait_60_seconds_1 ]
-#
+resource "kubernetes_namespace" "rancher" {
+  depends_on       = [ time_sleep.wait_60_seconds_1 ]
+
 #  lifecycle {
 #    ignore_changes  = all 
 #  }
-#
-#  metadata {
-#    name = "cattle-system"
-#  }
-#}
-#
 
-resource "helm_release" "rancher" {
-  depends_on       = [ time_sleep.wait_60_seconds_1,
-                       random_password.bootstrap_password ]
-
-  name             = "rancher"
-  repository       = "https://releases.rancher.com/server-charts/stable"
-  chart            = "rancher"
-  namespace        = "cattle-system"
-  create_namespace = true
-
-  set {
-    name  = "hostname"
-    value = var.rancher_host
-  }
-  set {
-    name  = "bootstrapPassword"
-    value = random_password.bootstrap_password.result
-  }
-  set {
-    name  = "proxy"
-    value = var.proxy
-  }
-  set {
-    name  = "noProxy"
-    value = var.no_proxy
-  }
-
-  set {
-    name  = "ingress.tls.source"
-    value = "secret"
-  }
-
-  set {
-    name  = "privateCA"
-    value = "true"
+  metadata {
+    name = "cattle-system"
   }
 }
 
 resource "kubernetes_secret" "rancher_tls" {
-  depends_on = [ helm_release.rancher ]
+  depends_on = [ kubernetes_namespace.rancher ]
   metadata {
     name       = "tls-rancher-ingress"
     namespace  = "cattle-system"
@@ -90,7 +51,7 @@ resource "kubernetes_secret" "rancher_tls" {
 }
 
 resource "kubernetes_secret" "tls_ca" {
-  depends_on = [ helm_release.rancher ]
+  depends_on = [ kubernetes_namespace.rancher ]
   metadata {
     name       = "tls-ca"
     namespace  = "cattle-system"
@@ -99,6 +60,24 @@ resource "kubernetes_secret" "tls_ca" {
   data       = {
       "cacerts.pem"  = var.ca_crt
   }
+}
+
+resource "helm_release" "rancher" {
+  depends_on       = [ kubernetes_namespace.rancher,
+                       random_password.bootstrap_password ]
+
+  name             = "rancher"
+  repository       = "https://releases.rancher.com/server-charts/stable"
+  chart            = "rancher"
+  namespace        = "cattle-system"
+  create_namespace = true
+  values     = [ "${format(file("${path.module}/etc/rancher-config.yaml"),
+                     var.rancher_host,
+                     random_password.bootstrap_password.result,
+                     var.proxy,
+                     var.no_proxy)}"
+               ]
+ 
 }
 
 
