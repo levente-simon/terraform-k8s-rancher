@@ -1,9 +1,9 @@
 terraform {
   required_providers {
-    rke = {
-      source  = "rancher/rke"
-      version = ">= 1.3.0"
-    }
+#    rke = {
+#      source  = "rancher/rke"
+#      version = ">= 1.3.0"
+#    }
     rancher2 = {
       source  = "rancher/rancher2"
       version = ">= 1.22.2"
@@ -17,19 +17,19 @@ terraform {
 
 provider "kubernetes" {
   # config_path = var.k8s_config_path
-  host                   = rke_cluster.mgmt_cluster.control_plane_hosts.0
-  client_certificate     = rke_cluster.mgmt_cluster.client_cert
-  client_key             = rke_cluster.mgmt_cluster.client_key
-  cluster_ca_certificate = rke_cluster.mgmt_cluster.ca_crt
+  host                   = var.k8s_host
+  client_certificate     = var.k8s_client_certificate
+  client_key             = var.k8s_client_key
+  cluster_ca_certificate = var.k8s_cluster_ca_certificate
 }
 
 provider "helm" {
   kubernetes {
     # config_path = var.k8s_config_path
-    host                   = rke_cluster.mgmt_cluster.control_plane_hosts.0
-    client_certificate     = rke_cluster.mgmt_cluster.client_cert
-    client_key             = rke_cluster.mgmt_cluster.client_key
-    cluster_ca_certificate = rke_cluster.mgmt_cluster.ca_crt
+    host                   = var.k8s_host
+    client_certificate     = var.k8s_client_certificate
+    client_key             = var.k8s_client_key
+    cluster_ca_certificate = var.k8s_cluster_ca_certificate
   }
 }
 
