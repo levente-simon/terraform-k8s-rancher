@@ -23,9 +23,9 @@ resource "rke_cluster" "mgmt_cluster" {
   }
 }
 
-resource "local_file" "kube_config" {
-    sensitive_content = rke_cluster.mgmt_cluster.kube_config_yaml
-    filename          = var.k8s_config_path
-    file_permission   = "0600"
+resource "local_sensitive_file" "kube_config" {
+    content         = rke_cluster.mgmt_cluster.kube_config_yaml
+    filename        = var.k8s_config_path
+    file_permission = "0600"
 }
 
