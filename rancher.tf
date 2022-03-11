@@ -1,5 +1,9 @@
+variable "module_depends_on" {
+  type    = any
+  default = []
+}
 resource "helm_release" "cert-manager" {
-  depends_on       = [ local_sensitive_file.kube_config ]
+  depends_on       = [ var.module_depends_on ]
   name             = "cert-manager"
 
   repository       = "https://charts.jetstack.io"
