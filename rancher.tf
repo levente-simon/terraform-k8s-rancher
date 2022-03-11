@@ -84,10 +84,8 @@ resource "helm_release" "rancher" {
  
 }
 
-
 resource "time_sleep" "wait_30_seconds_2" {
-  depends_on      = [ kubernetes_secret.tls_ca,
-                      kubernetes_secret.rancher_tls ]
+  depends_on      = [ helm_release.rancher ]
   create_duration = "30s"
 }
 
