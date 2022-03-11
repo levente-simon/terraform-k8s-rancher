@@ -1,5 +1,5 @@
 resource "helm_release" "cert-manager" {
-  depends_on       = [ local_file.kube_config ]
+  depends_on       = [ local_sensitive_file.kube_config ]
   name             = "cert-manager"
 
   repository       = "https://charts.jetstack.io"
