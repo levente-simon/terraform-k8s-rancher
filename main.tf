@@ -16,7 +16,6 @@ terraform {
 }
 
 provider "kubernetes" {
-  # config_path = var.k8s_config_path
   host                   = var.k8s_host
   client_certificate     = var.k8s_client_certificate
   client_key             = var.k8s_client_key
@@ -25,7 +24,6 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    # config_path = var.k8s_config_path
     host                   = var.k8s_host
     client_certificate     = var.k8s_client_certificate
     client_key             = var.k8s_client_key

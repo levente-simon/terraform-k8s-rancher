@@ -40,32 +40,32 @@ resource "kubernetes_namespace" "rancher" {
   }
 }
 
-#resource "kubernetes_secret" "rancher_tls" {
-#  depends_on = [ kubernetes_namespace.rancher ]
-#  metadata {
-#    name       = "tls-rancher-ingress"
-#    namespace  = "cattle-system"
-#  }
-#
-#  type       = "kubernetes.io/tls"
-#  data       = {
-#      "tls.crt" = var.rancher_tls_crt
-#      "tls.key" = var.rancher_tls_key
-#  }
-#}
-#
-#resource "kubernetes_secret" "tls_ca" {
-#  depends_on = [ kubernetes_namespace.rancher ]
-#  metadata {
-#    name       = "tls-ca"
-#    namespace  = "cattle-system"
-#  }
-#
-#  data       = {
-#      "cacerts.pem"  = var.ca_crt
-#  }
-#}
-#
+resource "kubernetes_secret" "rancher_tls" {
+  depends_on = [ kubernetes_namespace.rancher ]
+  metadata {
+    name       = "tls-rancher-ingress"
+    namespace  = "cattle-system"
+  }
+
+  type       = "kubernetes.io/tls"
+  data       = {
+      "tls.crt" = var.rancher_tls_crt
+      "tls.key" = var.rancher_tls_key
+  }
+}
+
+resource "kubernetes_secret" "tls_ca" {
+  depends_on = [ kubernetes_namespace.rancher ]
+  metadata {
+    name       = "tls-ca"
+    namespace  = "cattle-system"
+  }
+
+  data       = {
+      "cacerts.pem"  = var.ca_crt
+  }
+}
+
 resource "helm_release" "rancher" {
   depends_on       = [ kubernetes_namespace.rancher,
                        random_password.bootstrap_password ]
