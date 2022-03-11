@@ -17,6 +17,7 @@ terraform {
 
 provider "kubernetes" {
   # config_path = var.k8s_config_path
+  host                   = rke_cluster.mgmt_cluster.control_plane_hosts.0
   client_certificate     = rke_cluster.mgmt_cluster.client_cert
   client_key             = rke_cluster.mgmt_cluster.client_key
   cluster_ca_certificate = rke_cluster.mgmt_cluster.ca_crt
@@ -25,6 +26,7 @@ provider "kubernetes" {
 provider "helm" {
   kubernetes {
     # config_path = var.k8s_config_path
+    host                   = rke_cluster.mgmt_cluster.control_plane_hosts.0
     client_certificate     = rke_cluster.mgmt_cluster.client_cert
     client_key             = rke_cluster.mgmt_cluster.client_key
     cluster_ca_certificate = rke_cluster.mgmt_cluster.ca_crt
