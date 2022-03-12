@@ -31,9 +31,9 @@ resource "random_password" "bootstrap_password" {
 resource "kubernetes_namespace" "rancher" {
   depends_on       = [ time_sleep.wait_60_seconds_1 ]
 
-#  lifecycle {
-#    ignore_changes  = all 
-#  }
+  lifecycle {
+    ignore_changes  = all 
+  }
 
   metadata {
     name = "cattle-system"
@@ -42,6 +42,11 @@ resource "kubernetes_namespace" "rancher" {
 
 resource "kubernetes_secret" "rancher_tls" {
   depends_on = [ kubernetes_namespace.rancher ]
+
+  lifecycle {
+    ignore_changes  = all 
+  }
+
   metadata {
     name       = "tls-rancher-ingress"
     namespace  = "cattle-system"
@@ -56,6 +61,11 @@ resource "kubernetes_secret" "rancher_tls" {
 
 resource "kubernetes_secret" "tls_ca" {
   depends_on = [ kubernetes_namespace.rancher ]
+
+  lifecycle {
+    ignore_changes  = all 
+  }
+
   metadata {
     name       = "tls-ca"
     namespace  = "cattle-system"
