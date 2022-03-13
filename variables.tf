@@ -44,3 +44,8 @@ variable "k8s_cluster_client_token" {
   sensitive = true
   default   = ""
 }
+
+variable "longhorn_data_path" {
+  type    = string
+  default = "/data/longhorn"
+}
