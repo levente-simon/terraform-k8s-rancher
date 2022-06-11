@@ -1,7 +1,7 @@
 variable "k8s_config_path"        { type = string   }
 variable "metallb_address_pool"   { type = string   }
-variable "proxy"                  { type = string   }
-variable "no_proxy"               { type = string   }
+# variable "proxy"                  { type = string   }
+# variable "no_proxy"               { type = string   }
 variable "rancher_host"           { type = string   }
 variable "dns_server"             { type = string   }
 variable "dns_port"               { type = string   }

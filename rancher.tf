@@ -87,9 +87,9 @@ resource "helm_release" "rancher" {
   create_namespace = true
   values     = [ "${format(file("${path.module}/etc/rancher-config.yaml"),
                      var.rancher_host,
-                     random_password.bootstrap_password.result,
-                     var.proxy,
-                     var.no_proxy)}"
+                     random_password.bootstrap_password.result)}"
+                     # var.proxy,
+                     # var.no_proxy)}"
                ]
  
 }
