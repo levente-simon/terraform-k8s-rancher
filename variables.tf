@@ -49,3 +49,8 @@ variable "longhorn_data_path" {
   type    = string
   default = "/data/longhorn"
 }
+
+variable "longhorn_default_replica_count" {
+  type    = number
+  default = 3
+}
