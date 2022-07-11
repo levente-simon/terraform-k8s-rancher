@@ -69,21 +69,21 @@ resource "rancher2_app_v2" "metallb" {
   namespace  = "metallb"
 }
 
-resource "kubernetes_manifest" "metallb_address_pool" {
-  depends_on = [ rancher2_app_v2.metallb ]
-
-  manifest   = {
-    "apiVersion" = "metallb.io/v1beta1"
-    "kind"       = "IPAddressPool"
-    "metadata"   = {
-      "name"      = "default"
-      "namespace" = "metallb"
-    }
-    "spec" = {
-      "addresses" = [ var.metallb_address_pool ]
-    }
-  }
-}
+#resource "kubernetes_manifest" "metallb_address_pool" {
+#  depends_on = [ rancher2_app_v2.metallb ]
+#
+#  manifest   = {
+#    "apiVersion" = "metallb.io/v1beta1"
+#    "kind"       = "IPAddressPool"
+#    "metadata"   = {
+#      "name"      = "default"
+#      "namespace" = "metallb"
+#    }
+#    "spec" = {
+#      "addresses" = [ var.metallb_address_pool ]
+#    }
+#  }
+#}
 
 
 ################################################################
