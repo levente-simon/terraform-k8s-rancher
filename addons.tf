@@ -58,7 +58,7 @@ resource "rancher2_app_v2" "longhorn" {
 ################################################################
 
 resource "rancher2_app_v2" "metallb" {
-  depends_on = [ rancher2_catalog_v2.metallb,
+  depends_on = [ rancher2_catalog_v2.bitnami,
                  time_sleep.wait_60_seconds_2 ]
   provider   = rancher2.admin
   cluster_id = data.rancher2_cluster.local.id
