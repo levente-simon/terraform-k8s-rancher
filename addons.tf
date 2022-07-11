@@ -15,15 +15,15 @@ resource "time_sleep" "wait_60_seconds_2" {
 ##
 ################################################################
 
-resource "rancher2_catalog_v2" "metallb" {
-  depends_on = [ rancher2_bootstrap.admin ]
-  provider   = rancher2.admin
-  cluster_id = data.rancher2_cluster.local.id
-
-  name       = "metallb"
-  url        = "https://metallb.github.io/metallb"
-}
-
+#resource "rancher2_catalog_v2" "metallb" {
+#  depends_on = [ rancher2_bootstrap.admin ]
+#  provider   = rancher2.admin
+#  cluster_id = data.rancher2_cluster.local.id
+#
+#  name       = "metallb"
+#  url        = "https://metallb.github.io/metallb"
+#}
+#
 resource "rancher2_catalog_v2" "bitnami" {
   depends_on = [ rancher2_bootstrap.admin ]
   provider   = rancher2.admin
@@ -64,7 +64,7 @@ resource "rancher2_app_v2" "metallb" {
   cluster_id = data.rancher2_cluster.local.id
 
   name       = "metallb"
-  repo_name  = "metallb"
+  repo_name  = "bitnami"
   chart_name = "metallb"
   namespace  = "metallb"
   values     = format(file("${path.module}/etc/metallb-config.yaml"), var.metallb_address_pool)
