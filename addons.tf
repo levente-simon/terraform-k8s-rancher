@@ -48,7 +48,7 @@ resource "rancher2_app_v2" "longhorn" {
   repo_name  = "rancher-charts"
   chart_name = "longhorn"
   namespace  = "longhorn-system"
-  values     = format(file("${path.module}/etc/longhorn-config.yaml"), var.longhorn_data_path, var.longhorn_default_replica_count)
+  # values     = format(file("${path.module}/etc/longhorn-config.yaml"), var.longhorn_data_path, var.longhorn_default_replica_count)
 }
 
 ################################################################
@@ -67,8 +67,24 @@ resource "rancher2_app_v2" "metallb" {
   repo_name  = "metallb"
   chart_name = "metallb"
   namespace  = "metallb"
-  values     = format(file("${path.module}/etc/metallb-config.yaml"), var.metallb_address_pool)
 }
+
+resource "kubernetes_manifest" "metallb_address_pool" {
+  depends_on = [ rancher2_app_v2.metallb ]
+
+  manifest   = {
+    "apiVersion" = "metallb.io/v1beta1"
+    "kind"       = "IPAddressPool"
+    "metadata"   = {
+      "name"      = "default"
+      "namespace" = "metallb"
+    }
+    "spec" = {
+      "addresses" = [ var.metallb_address_pool ]
+    }
+  }
+}
+
 
 ################################################################
 ##
