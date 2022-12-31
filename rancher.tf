@@ -91,8 +91,14 @@ resource "kubernetes_secret" "tls_ca" {
   }
 }
 
+resource "time_sleep" "wait_for_certs" {
+  depends_on      = [ kubernetes_manifest.cert_rancher,
+                      kubernetes_secret.tls_ca ]
+  create_duration = "60s"
+}
+
 resource "helm_release" "rancher" {
-  depends_on       = [ kubernetes_manifest.cert_rancher,
+  depends_on       = [ time_sleep.wait_for_certs,
                        random_password.bootstrap_password ]
 
   name             = "rancher"
