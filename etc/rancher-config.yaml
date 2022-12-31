@@ -1,8 +1,6 @@
 hostname: %s
 bootstrapPassword: %s
 ingress:
-  extraAnnotations: 
-    cert-manager.io/cluster-issuer: vault-issuer
   tls:
     source: secret
     secretName: tls-rancher-ingress

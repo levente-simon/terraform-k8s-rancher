@@ -22,6 +22,39 @@ resource "kubernetes_namespace" "rancher" {
   }
 }
 
+resource "kubernetes_manifest" "cert_rancher" {
+  depends_on = [ kubernetes_namespace.rancher ]
+
+  manifest   = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata"   = {
+      "name"        = "tls-rancher-ingress"
+      "namespace"   = "cattle-system"
+    }
+    "spec"       = {
+      "secretName"  = "tls-rancher-ingress"
+      "duration"    = "24h0m0s"
+      "renewBefore" = "2h0m0s"
+      "subject"     = {
+        "organizations" = [ "Corp" ]
+      }
+      "privateKey"  = {
+        "algorithm"     = "RSA"
+        "encoding"      = "PKCS1"
+        "size"          = "2048"
+      }
+      "usages"      = [ "server auth"  ]
+      "dnsNames"    = [ "${var.rancher_host}" ]
+      "issuerRef"   = { 
+        "name"  = "vault-issuer"
+        "kind"  = "ClusterIssuer"
+      }
+    }
+  }
+}
+
+
 # resource "kubernetes_secret" "rancher_tls" {
 #   depends_on = [ kubernetes_namespace.rancher ]
 # 
@@ -59,7 +92,7 @@ resource "kubernetes_secret" "tls_ca" {
 }
 
 resource "helm_release" "rancher" {
-  depends_on       = [ kubernetes_namespace.rancher,
+  depends_on       = [ kubernetes_manifest.cert_rancher,
                        random_password.bootstrap_password ]
 
   name             = "rancher"
