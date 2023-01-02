@@ -97,6 +97,7 @@ resource "helm_release" "rancher" {
   chart            = "rancher"
   namespace        = "cattle-system"
   create_namespace = true
+  wait             = true
   values     = [ "${format(file("${path.module}/etc/rancher-config.yaml"),
                      var.rancher_host,
                      random_password.bootstrap_password.result)}"
@@ -104,13 +105,8 @@ resource "helm_release" "rancher" {
  
 }
 
-resource "time_sleep" "wait_20_seconds" {
-  depends_on      = [ helm_release.rancher ]
-  create_duration = "20s"
-}
-
 resource "rancher2_bootstrap" "admin" {
-  depends_on = [ time_sleep.wait_30_seconds_2 ]
+  depends_on = [ helm_release.rancher ]
   provider   = rancher2.bootstrap
 
   lifecycle {
