@@ -4,17 +4,6 @@ data "rancher2_cluster" "local" {
   name       = "local"
 }
 
-resource "time_sleep" "wait_60_seconds_2" {
-  depends_on = [ rancher2_bootstrap.admin ]
-  create_duration = "60s"
-}
-
-################################################################
-##
-##       Catalogs
-##
-################################################################
-
 resource "rancher2_catalog_v2" "bitnami" {
   depends_on = [ rancher2_bootstrap.admin ]
   provider   = rancher2.admin
